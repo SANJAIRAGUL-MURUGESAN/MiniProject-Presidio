@@ -1,5 +1,8 @@
-﻿namespace RailwayReservationApp.Exceptions.PaymentExceptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RailwayReservationApp.Exceptions.PaymentExceptions
 {
+    [ExcludeFromCodeCoverage]
     public class NoPaymentsFoundException : Exception
     {
         string msg;

@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchTrainRouteFoundException();
         }
-        public Task<TrainRoutes> GetbyKey(int key)
+        public async Task<TrainRoutes> GetbyKey(int key)
         {
-            var trainRoutes = _context.TrainRoutes.FirstOrDefaultAsync(t => t.RouteId == key);
+            var trainRoutes = await _context.TrainRoutes.FirstOrDefaultAsync(t => t.RouteId == key);
             if (trainRoutes != null) 
             {
                 return trainRoutes;
@@ -50,12 +50,15 @@ namespace RailwayReservationApp.Repositories
         }
         public async Task<TrainRoutes> Update(TrainRoutes item)
         {
-            var employee = await GetbyKey(item.RouteId);
-            if (employee != null)
+            var trainRoute = await GetbyKey(item.RouteId);
+            if (trainRoute != null)
             {
-                _context.Update(item);
-                _context.SaveChangesAsync(true);
-                return employee;
+                _context.Entry(trainRoute).CurrentValues.SetValues(item);
+                await _context.SaveChangesAsync();
+                return trainRoute;
+                //_context.Update(item);
+                //await _context.SaveChangesAsync(true);
+                //return employee;
             }
             throw new NoTrainRoutesFoundException();
         }

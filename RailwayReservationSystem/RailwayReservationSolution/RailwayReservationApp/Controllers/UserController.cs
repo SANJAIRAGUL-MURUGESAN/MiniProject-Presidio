@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using RailwayReservationApp.Exceptions.ReservationExceptions;
 using RailwayReservationApp.Exceptions.RewardExceptions;
 using RailwayReservationApp.Exceptions.SeatExcepions;
+using RailwayReservationApp.Exceptions.TrainClassExceptions;
 using RailwayReservationApp.Exceptions.TrainExceptions;
 using RailwayReservationApp.Exceptions.UserExceptions;
 using RailwayReservationApp.Interfaces;
@@ -10,18 +12,22 @@ using RailwayReservationApp.Models;
 using RailwayReservationApp.Models.AdminDTOs;
 using RailwayReservationApp.Models.UserDTOs;
 using RailwayReservationApp.Services;
+using System.Diagnostics.CodeAnalysis;
 using System.Runtime.CompilerServices;
 
 namespace RailwayReservationApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ExcludeFromCodeCoverage]
     public class UserController : ControllerBase
     {
         private readonly IUserService _UserService;
-        public UserController(IUserService userService)
+        private readonly IUserSecondaryService _UserSecondaryService;
+        public UserController(IUserService userService, IUserSecondaryService userSecondaryService)
         {
             _UserService = userService;
+            _UserSecondaryService = userSecondaryService;
         }
 
         [Route("UserRegistration")]
@@ -48,15 +54,32 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
+        [HttpPost("UserLogin")]
+        [ProducesResponseType(typeof(UserLoginReturnDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        public async Task<ActionResult<UserLoginReturnDTO>> Login(UserLoginDTO userLoginDTO)
+        {
+            try
+            {
+                var login = await _UserService.Login(userLoginDTO);
+                return Ok(login);
+            }
+            catch (Exception ex)
+            {
+                //_logger.LogCritical("User Not Authenticated");
+                return Unauthorized(new ErrorModel(401, ex.Message));
+            }
+        }
 
 
+        //[Authorize(Roles = "User")]
         [Route("SearchTrainByUser/Location")]
         [HttpPost]
-        [ProducesResponseType(typeof(IList<Train>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IList<TrainSearchResultDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         [ProducesErrorResponseType(typeof(ErrorModel))]
-        public async Task<ActionResult<IList<Train>>> Get([FromBody] SearchTrainDTO SearchTrainDTO)
+        public async Task<ActionResult<IList<TrainSearchResultDTO>>> Get([FromBody] SearchTrainDTO SearchTrainDTO)
         {
             try
             {
@@ -77,6 +100,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
+        //[Authorize(Roles = "User")]
         [Route("BookTrainByUser")]
         [HttpPost]
         [ProducesResponseType(typeof(BookTrainReturnDTO), StatusCodes.Status200OK)]
@@ -104,6 +128,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
+        //[Authorize(Roles = "User")]
         [Route("ReservationPayment")]
         [HttpPost]
         [ProducesResponseType(typeof(AddPaymentReturnDTO), StatusCodes.Status200OK)]
@@ -127,6 +152,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
+        //[Authorize(Roles = "User")]
         [Route("CancelReservation")]
         [HttpPost]
         [ProducesResponseType(typeof(CancelReservationReturnDTO), StatusCodes.Status200OK)]
@@ -151,6 +177,177 @@ namespace RailwayReservationApp.Controllers
             catch (NoSuchSeatFoundException nssfe)
             {
                 return NotFound(new ErrorModel(409, nssfe.Message));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        //[Authorize(Roles = "User")]
+        [Route("GetTrainClasses")]
+        [HttpPost]
+        [ProducesResponseType(typeof(IList<GetTrainClassReturnDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
+        public async Task<ActionResult<IList<GetTrainClassReturnDTO>>> GetTrainClass([FromBody]  int TrainId)
+        {
+            try
+            {
+                var Classes = await _UserService.GetAllClassofTrain(TrainId);
+                return Ok(Classes);
+            }
+            catch (NoTrainClassFoundException ntcfe)
+            {
+                return NotFound(new ErrorModel(409, ntcfe.Message));
+            }
+            catch (NoSuchTrainFoundException nstfe)
+            {
+                return NotFound(new ErrorModel(409, nstfe.Message));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        //[Authorize(Roles = "User")]
+        [Route("UpcomingReservations")]
+        [HttpPost]
+        [ProducesResponseType(typeof(IList<UserBookedTrainsReturnDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
+        public async Task<ActionResult<IList<UserBookedTrainsReturnDTO>>> GetBookedTrain([FromBody] int UserId)
+        {
+            try
+            {
+                var Trains = await _UserSecondaryService.GetBookedTrains(UserId);
+                return Ok(Trains);
+            }
+            catch (NoTrainClassFoundException ntcfe)
+            {
+                return NotFound(new ErrorModel(409, ntcfe.Message));
+            }
+            catch (NoBookedTrainsAvailableException nbtfe)
+            {
+                return NotFound(new ErrorModel(409, nbtfe.Message));
+            }
+            catch (NoReservationsFoundException nrfe)
+            {
+                return NotFound(new ErrorModel(409, nrfe.Message));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        //[Authorize(Roles = "User")]
+        [Route("PastBookings")]
+        [HttpPost]
+        [ProducesResponseType(typeof(IList<UserBookedTrainsReturnDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
+        public async Task<ActionResult<IList<UserBookedTrainsReturnDTO>>> GetPastBookings([FromBody] int UserId)
+        {
+            try
+            {
+                var Trains = await _UserSecondaryService.GetPastBookings(UserId);
+                return Ok(Trains);
+            }
+            catch (NoTrainClassFoundException ntcfe)
+            {
+                return NotFound(new ErrorModel(409, ntcfe.Message));
+            }
+            catch (NoBookedTrainsAvailableException nbtfe)
+            {
+                return NotFound(new ErrorModel(409, nbtfe.Message));
+            }
+            catch (NoReservationsFoundException nrfe)
+            {
+                return NotFound(new ErrorModel(409, nrfe.Message));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        //[Authorize(Roles = "User")]
+        [Route("CheckSeatDetailsofTrain")]
+        [HttpPost]
+        [ProducesResponseType(typeof(CheckSeatDetailsReturnDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
+        public async Task<ActionResult<CheckSeatDetailsReturnDTO>> Get([FromBody] int TrainId)
+        {
+            try
+            {
+                var seat = await _UserSecondaryService.CheckSeatsDetailsbyAdmin(TrainId);
+                return Ok(seat);
+            }
+            catch (NoSuchTrainFoundException nstfe)
+            {
+                Console.Write("Station Error");
+                return NotFound(new ErrorModel(404, nstfe.Message));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Exception : " + ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        //[Authorize(Roles = "User")]
+        [Route("UpdateUser")]
+        [HttpPut]
+        [ProducesResponseType(typeof(Users), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
+        public async Task<ActionResult<Users>> UpdateUser([FromBody] UpdateUserDTO updateUserDTO)
+        {
+            try
+            {
+                var User = await _UserSecondaryService.UpdateUser(updateUserDTO);
+                return Ok(User);
+            }
+            catch (NoSuchUserFoundException nsufe)
+            {
+                return NotFound(new ErrorModel(409, nsufe.Message));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        //[Authorize(Roles = "User")]
+        [Route("DeleteUser")]
+        [HttpDelete]
+        [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
+        public async Task<ActionResult<string>> DeleteUser([FromBody] int UserId)
+        {
+            try
+            {
+                var User = await _UserSecondaryService.DeleteUser(UserId);
+                return Ok(User);
+            }
+            catch (NoSuchUserFoundException nsufe)
+            {
+                return NotFound(new ErrorModel(409, nsufe.Message));
             }
             catch (Exception ex)
             {

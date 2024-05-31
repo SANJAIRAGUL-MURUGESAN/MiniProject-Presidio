@@ -30,14 +30,21 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchReservationFoundException();
         }
-        public virtual Task<Reservation> GetbyKey(int key)
+        public async virtual Task<Reservation> GetbyKey(int key)
         {
-            var reservation = _context.Reservations.FirstOrDefaultAsync(t => t.ReservationId == key);
-            if (reservation != null)
+            try
             {
-                return reservation;
+                var reservation = await _context.Reservations.FirstOrDefaultAsync(t => t.ReservationId == key);
+                if (reservation != null)
+                {
+                    return reservation;
+                }
+                throw new NoSuchReservationFoundException();
             }
-            throw new NoSuchReservationFoundException();
+            catch (NoSuchReservationFoundException)
+            {
+                throw new NoSuchReservationFoundException();
+            }
         }
         public async Task<IEnumerable<Reservation>> Get()
         {
@@ -55,7 +62,7 @@ namespace RailwayReservationApp.Repositories
             if (reservation != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return reservation;
             }
             throw new NoSuchReservationFoundException();

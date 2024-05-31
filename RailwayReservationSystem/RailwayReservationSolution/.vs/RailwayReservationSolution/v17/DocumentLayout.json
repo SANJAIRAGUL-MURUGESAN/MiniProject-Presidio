@@ -1,22 +1,22 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\",
+  "WorkspaceRootPath": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\services\\adminservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\miniproject\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\services\\adminservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|solutionrelative:railwayreservationapp\\services\\adminservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\interfaces\\iadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|solutionrelative:railwayreservationapp\\interfaces\\iadminservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\miniproject\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|solutionrelative:railwayreservationapp\\services\\tokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\services\\userservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\miniproject\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\services\\userservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|solutionrelative:railwayreservationapp\\services\\userservices.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|solutionrelative:railwayreservationapp\\controllers\\admincontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|c:\\users\\vc\\desktop\\miniproject\\railwayreservationsystem\\railwayreservationsolution\\railwayreservationapp\\interfaces\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{8B250FA1-E21B-4F2D-B9CE-3738337531B2}|RailwayReservationApp\\RailwayReservationApp.csproj|solutionrelative:railwayreservationapp\\interfaces\\itokenservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -34,54 +34,54 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "ITokenService.cs",
+              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Interfaces\\ITokenService.cs",
+              "RelativeDocumentMoniker": "RailwayReservationApp\\Interfaces\\ITokenService.cs",
+              "ToolTip": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Interfaces\\ITokenService.cs",
+              "RelativeToolTip": "RailwayReservationApp\\Interfaces\\ITokenService.cs",
+              "ViewState": "AQIAAAAAAAAAAAAAAAAAAAcAAAAbAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-05-31T11:13:43.04Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 2,
               "Title": "UserServices.cs",
-              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\UserServices.cs",
+              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\UserServices.cs",
               "RelativeDocumentMoniker": "RailwayReservationApp\\Services\\UserServices.cs",
-              "ToolTip": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\UserServices.cs",
+              "ToolTip": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\UserServices.cs",
               "RelativeToolTip": "RailwayReservationApp\\Services\\UserServices.cs",
-              "ViewState": "AQIAAN0BAAAAAAAAAAAlwGABAAAIAAAA",
+              "ViewState": "AQIAAB4AAAAAAAAAAAAAAAAAAAAAAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-28T04:46:49.75Z",
+              "WhenOpened": "2024-05-31T11:10:36.121Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 1,
-              "Title": "IAdminService.cs",
-              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Interfaces\\IAdminService.cs",
-              "RelativeDocumentMoniker": "RailwayReservationApp\\Interfaces\\IAdminService.cs",
-              "ToolTip": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Interfaces\\IAdminService.cs",
-              "RelativeToolTip": "RailwayReservationApp\\Interfaces\\IAdminService.cs",
-              "ViewState": "AQIAAAkAAAAAAAAAAAA3wAwAAABrAAAA",
+              "Title": "TokenService.cs",
+              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\TokenService.cs",
+              "RelativeDocumentMoniker": "RailwayReservationApp\\Services\\TokenService.cs",
+              "ToolTip": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\TokenService.cs",
+              "RelativeToolTip": "RailwayReservationApp\\Services\\TokenService.cs",
+              "ViewState": "AQIAACoAAAAAAAAAAAAYwAkAAAAgAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-28T04:14:56.911Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AdminController.cs",
-              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Controllers\\AdminController.cs",
-              "RelativeDocumentMoniker": "RailwayReservationApp\\Controllers\\AdminController.cs",
-              "ToolTip": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Controllers\\AdminController.cs",
-              "RelativeToolTip": "RailwayReservationApp\\Controllers\\AdminController.cs",
-              "ViewState": "AQIAAKkAAAAAAAAAAAAIwKsAAABEAAAA",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-28T04:13:26.058Z",
+              "WhenOpened": "2024-05-31T11:05:33.718Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 0,
               "Title": "AdminServices.cs",
-              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\AdminServices.cs",
+              "DocumentMoniker": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\AdminServices.cs",
               "RelativeDocumentMoniker": "RailwayReservationApp\\Services\\AdminServices.cs",
-              "ToolTip": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\AdminServices.cs",
+              "ToolTip": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\Services\\AdminServices.cs",
               "RelativeToolTip": "RailwayReservationApp\\Services\\AdminServices.cs",
-              "ViewState": "AQIAAMABAAAAAAAAAIA+wMEBAAAJAAAA",
+              "ViewState": "AQIAAGQAAAAAAAAAAAD4v7oAAAAVAAAA",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2024-05-28T03:56:52.413Z",
+              "WhenOpened": "2024-05-31T06:18:58.197Z",
               "EditorCaption": ""
             }
           ]

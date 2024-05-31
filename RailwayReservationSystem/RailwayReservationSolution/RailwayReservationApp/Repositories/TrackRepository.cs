@@ -38,7 +38,7 @@ namespace RailwayReservationApp.Repositories
             {
                 return track;
             }
-            throw new NoSuchReservationFoundException();
+            throw new NoSuchTrackFoundException();
         }
         public async Task<IEnumerable<Track>> Get()
         {
@@ -47,7 +47,7 @@ namespace RailwayReservationApp.Repositories
             {
                 return tracks;
             }
-            throw new NoReservationsFoundException();
+            throw new NoTrainTracksFoundException();
         }
         public async Task<Track> Update(Track item)
         {
@@ -55,10 +55,10 @@ namespace RailwayReservationApp.Repositories
             if (track != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return track;
             }
-            throw new NoSuchReservationFoundException();
+            throw new NoSuchTrackFoundException();
         }
     }
 }

@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchUserFoundException();
         }
-        public Task<Users> GetbyKey(int key)
+        public async Task<Users> GetbyKey(int key)
         {
-            var user = _context.Users.FirstOrDefaultAsync(t => t.Id == key);
+            var user = await _context.Users.FirstOrDefaultAsync(t => t.Id == key);
             if (user != null)
             {
                 return user;
@@ -53,10 +53,15 @@ namespace RailwayReservationApp.Repositories
             var user = await GetbyKey(item.Id);
             if (user != null)
             {
-                _context.Update(item);
-                _context.SaveChangesAsync(true);
-                return user;
+                _context.Entry(user).CurrentValues.SetValues(item);
+                await _context.SaveChangesAsync();
+                //_context.Update(item);
+                //await _context.SaveChangesAsync(true);
+                //return user;
+                //_context.Entry<Users>(item).State = EntityState.Modified;
+                //await _context.SaveChangesAsync();
             }
+            return user;
             throw new NoSuchUserFoundException();
         }
     }

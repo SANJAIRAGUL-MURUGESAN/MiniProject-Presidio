@@ -11,5 +11,6 @@
         public int UserId { get; set; }
         public int TrainId { get; set; }
         public List<int> Seats { get; set; }
+        public string ClassName { get; set; }
     }
 }

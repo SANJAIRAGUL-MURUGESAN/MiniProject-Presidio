@@ -23,7 +23,6 @@ namespace RailwayReservationApp.Models
 
         // ForeignKey - Track ID
         public int TrackId { get; set; }
-
         public int TrackNumber { get; set; }
     }
 }

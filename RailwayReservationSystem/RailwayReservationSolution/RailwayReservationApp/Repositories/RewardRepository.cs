@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchRewardFoundException();
         }
-        public Task<Rewards> GetbyKey(int key)
+        public async Task<Rewards> GetbyKey(int key)
         {
-            var reward = _context.Rewards.FirstOrDefaultAsync(t => t.RewardId == key);
+            var reward = await _context.Rewards.FirstOrDefaultAsync(t => t.RewardId == key);
             if(reward != null)
             {
                 return reward;
@@ -54,7 +54,7 @@ namespace RailwayReservationApp.Repositories
             if (reward != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return reward;
             }
             throw new NoSuchRewardFoundException();

@@ -54,7 +54,7 @@ namespace RailwayReservationApp.Repositories
             if (employee != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return employee;
             }
             throw new NoSuchTrainFoundException();

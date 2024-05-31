@@ -12,5 +12,6 @@ namespace RailwayReservationApp.Models
         public string Gender { get; set; }
         public bool Disability { get; set; }
         public string Address { get; set; }
+        public string Password { get; set; }
     }
 }

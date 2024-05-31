@@ -1,40 +1,48 @@
 ﻿using RailwayReservationApp.Exceptions.ReservationExceptions;
 using RailwayReservationApp.Exceptions.RewardExceptions;
 using RailwayReservationApp.Exceptions.SeatExcepions;
+using RailwayReservationApp.Exceptions.TrainClassExceptions;
 using RailwayReservationApp.Exceptions.TrainExceptions;
 using RailwayReservationApp.Exceptions.UserExceptions;
 using RailwayReservationApp.Interfaces;
 using RailwayReservationApp.Models;
 using RailwayReservationApp.Models.AdminDTOs;
 using RailwayReservationApp.Models.UserDTOs;
+using RailwayReservationApp.Repositories;
 using RailwayReservationApp.Repositories.ReservationRequest;
 using RailwayReservationApp.Repositories.StationRequest;
 using RailwayReservationApp.Repositories.TrainRequest;
+using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace RailwayReservationApp.Services
-{
+{ 
     public class UserServices : IUserService
     {
-        private IRepository<int, Reservation> _ReservationRepository;
-        private IRepository<int, Train> _TrainRepository;
-        private TrainRequestforTrainRoutesRepository _TrainRequestforTrainRoutesRepository; // to Retrieve Routes of a Train
-        private IRepository<int, Station> _StationRepository;
-        private IRepository<int, Seat> _SeatRepository;
-        private ReservationRequestforSeatsRepository _ReservationRequestforSeatsRepository;
-        private IRepository<int, Users> _UserRepository;
-        private IRepository<int, UserDetails> _UserDetailsRepository;
-        private TrainRequestforReservationsRepository _TrainRequestforReservationsRepository;
-        private IRepository<int, Payment> _PaymentRepository;
-        private IRepository<int, Rewards> _RewardRepository;
-        private IRepository<int, ReservationCancel> _ReservationCancelRepository;
+        private readonly IRepository<int, Reservation> _ReservationRepository;
+        private readonly IRepository<int, Train> _TrainRepository;
+        private readonly TrainRequestforTrainRoutesRepository _TrainRequestforTrainRoutesRepository; // to Retrieve Routes of a Train
+        private readonly IRepository<int, Station> _StationRepository;
+        private readonly IRepository<int, Seat> _SeatRepository;
+        private readonly ReservationRequestforSeatsRepository _ReservationRequestforSeatsRepository;
+        private readonly IRepository<int, Users> _UserRepository;
+        private readonly IRepository<int, UserDetails> _UserDetailsRepository;
+        private readonly TrainRequestforReservationsRepository _TrainRequestforReservationsRepository;
+        private readonly IRepository<int, Payment> _PaymentRepository;
+        private readonly IRepository<int, Rewards> _RewardRepository;
+        private readonly IRepository<int, ReservationCancel> _ReservationCancelRepository;
+        private readonly ITokenService _TokenService;
+        private readonly IRepository<int, TrainClass> _TrainClassRepository;
+        private readonly TrainRequestforClassesRepository _TrainRequestforClassesRepository;
 
         public UserServices(IRepository<int, Reservation> ReservationRepository, IRepository<int, Train> TrainRepository,
             TrainRequestforTrainRoutesRepository TrainRequestforTrainRoutesRepository, IRepository<int, Station> StationRepository,
             IRepository<int, Seat> SeatRepository, ReservationRequestforSeatsRepository ReservationRequestforSeatsRepository,
             IRepository<int, Users> UserRepository, IRepository<int, UserDetails> UserDetailsRepository, TrainRequestforReservationsRepository TrainRequestforReservationsRepository,
-            IRepository<int, Payment> PaymentRepository, IRepository<int, Rewards> RewardRepository,IRepository<int, ReservationCancel> ReservationCancelRepository) 
+            IRepository<int, Payment> PaymentRepository, IRepository<int, Rewards> RewardRepository, IRepository<int, ReservationCancel> ReservationCancelRepository, ITokenService tokenService,
+            TrainRequestforClassesRepository TrainRequestforClassesRepository, IRepository<int, TrainClass> TrainClassRepository)
         {
             _ReservationRepository = ReservationRepository;
             _TrainRepository = TrainRepository;
@@ -48,6 +56,9 @@ namespace RailwayReservationApp.Services
             _PaymentRepository = PaymentRepository;
             _RewardRepository = RewardRepository;
             _ReservationCancelRepository = ReservationCancelRepository;
+            _TokenService = tokenService;
+            _TrainRequestforClassesRepository = TrainRequestforClassesRepository;
+            _TrainClassRepository = TrainClassRepository;
         }
 
         public UserServices(IRepository<int, Reservation> reservationRepository, IRepository<int, Train> trainRepository, IRepository<int, Station> stationRepository, TrainRequestforTrainRoutesRepository trainRequestforTrainRoutesRepository, IRepository<int, Seat> seatRepository, IRepository<int, Users> userRepository, IRepository<int, UserDetails> userDetailsRepository, IRepository<int, Payment> paymentRepository, IRepository<int, Rewards> rewardRepository, IRepository<int, ReservationCancel> reservationCancelRepository, TrainRequestforReservationsRepository trainRequestforReservationsRepository, ReservationRequestforSeatsRepository reservationRequestforSeatsRepository)
@@ -64,6 +75,7 @@ namespace RailwayReservationApp.Services
             this._ReservationCancelRepository = reservationCancelRepository;
             this._TrainRequestforReservationsRepository = trainRequestforReservationsRepository;
             this._ReservationRequestforSeatsRepository = reservationRequestforSeatsRepository;
+            //this._TrainRequestforClassesRepository = trainRequestforClassesRepository;
         }
 
 
@@ -107,10 +119,10 @@ namespace RailwayReservationApp.Services
             await _UserRepository.Delete(user.Id);
         }
 
-        //public async Task RevertUserInsert(UserDetails userDetails)
-        //{
-        //    await _UserDetailsRepository.Update(userDetails.UserDetailsId);
-        //}
+        public async Task RevertUserInsert(UserDetails userDetails)
+        {
+            await _UserDetailsRepository.Update(userDetails);
+        }
         public async Task<UserRegisterReturnDTO> UserRegistration(UserRegisterDTO userRegisterDTO)
         {
             try
@@ -120,15 +132,15 @@ namespace RailwayReservationApp.Services
                 user.Id = UserAdditionResult.Id;
                 UserDetails userDetails = MapUserAdditionResultToAddUserDeatails(userRegisterDTO, user);
                 var UserDetailsAdditionResult = await _UserDetailsRepository.Add(userDetails);
-                if( UserAdditionResult != null && UserAdditionResult == null)
+                if (UserAdditionResult != null && UserAdditionResult == null)
                 {
                     await RevertUserdetailsInsert(UserAdditionResult);
                     throw new UnableToRegisterException();
                 }
-                //if( UserAdditionResult == null && UserAdditionResult != null)
-                //{
-                //    await RevertUserInsert(UserDetailsAdditionResult);
-                //}
+                if (UserAdditionResult == null && UserAdditionResult != null)
+                {
+                    await RevertUserInsert(UserDetailsAdditionResult);
+                }
                 return UserAdditionResultToUserRegisterReturnDTO(user);
             }
             catch (NoSuchUserFoundException)
@@ -140,56 +152,132 @@ namespace RailwayReservationApp.Services
                 throw new Exception();
             }
         }
-        
+
         // End - Function for User Registration
+
+
+        // Start - Function for User Login
+
+        private bool ComparePassword(byte[] encrypterPass, byte[] password)
+        {
+            for (int i = 0; i < encrypterPass.Length; i++)
+            {
+                if (encrypterPass[i] != password[i])
+                {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        private UserLoginReturnDTO MapEmployeeToLoginReturn(Users user)
+        {
+            UserLoginReturnDTO returnDTO = new UserLoginReturnDTO();
+            returnDTO.UserId = user.Id;
+            returnDTO.Token = _TokenService.GenerateToken(user);
+            returnDTO.Role = "User";
+            return returnDTO;
+        }
+        public async Task<UserLoginReturnDTO> Login(UserLoginDTO loginDTO)
+        {
+            var userDB = await _UserDetailsRepository.GetbyKey(loginDTO.UserId);
+            if (userDB == null)
+            {
+                throw new InvalidCredentialsException();
+            }
+            HMACSHA512 hMACSHA = new HMACSHA512(userDB.PasswordHashKey);
+            var encrypterPass = hMACSHA.ComputeHash(Encoding.UTF8.GetBytes(loginDTO.Password));
+            bool isPasswordSame = ComparePassword(encrypterPass, userDB.Password);
+            if (isPasswordSame)
+            {
+                var user = await _UserRepository.GetbyKey(loginDTO.UserId);
+                UserLoginReturnDTO loginReturnDTO = MapEmployeeToLoginReturn(user);
+                return loginReturnDTO;
+            }
+            throw new InvalidCredentialsException();
+        }
+        // End - Function for User Login
 
 
         // Start - Function to Search a Train by User (By Starting point, Ending Point, Start Date)
 
-        public async Task<IEnumerable<Train>> SearchTrainByUser(SearchTrainDTO searchTrainDTO)
+        public async Task<bool> RouteFunction(int TrainId, string StartingPoint, string EndingPoint, DateTime StartDate)
+        {
+            var TrainDetails = await _TrainRequestforTrainRoutesRepository.GetbyKey(TrainId);
+            List<TrainRoutes> TrainAloneDetails = TrainDetails.TrainRoutes.ToList();
+            int StartingPointFlag = 0;
+            int EndingPointFlag = 0;
+            foreach (var route in TrainAloneDetails)
+            {
+                var station = await _StationRepository.GetbyKey(route.StationId);
+                Console.WriteLine("Station name " + station.StationName);
+                if ((station.StationName == StartingPoint) && (route.RouteEndDate.Date == StartDate.Date))
+                {
+                    StartingPointFlag = 1;
+                    continue;
+                }
+                if ((station.StationName == EndingPoint) && StartingPointFlag == 1)
+                {
+                    EndingPointFlag = 1;
+                    break;
+                }
+            }
+            if (StartingPointFlag == 1 && EndingPointFlag == 1)
+            {
+                return true;
+            }
+            return false;
+        }
+        public async Task<IList<TrainSearchResultDTO>> SearchTrainByUser(SearchTrainDTO searchTrainDTO)
         {
             try
             {
-                var Trains = await _TrainRepository.Get(); // Getting All Trains
-                // Fetching whether Train is available as per User Requirement(End to End Starting Point)
-                var InlineTrains = Trains.Where(t => t.TrainStartDate.Date == searchTrainDTO.TrainStartDate.Date &&
-                t.StartingPoint == searchTrainDTO.StartingPoint && t.EndingPoint == searchTrainDTO.EndingPoint && t.TrainStatus == "Inline").ToList();
-                if (InlineTrains.Count > 0)
+                List<TrainSearchResultDTO> Result = new List<TrainSearchResultDTO>();
+                var Trains = (await _TrainRepository.Get()).Where(t => t.StartingPoint == searchTrainDTO.StartingPoint && t.EndingPoint == searchTrainDTO.EndingPoint && t.TrainStartDate.Date == searchTrainDTO.TrainStartDate.Date && t.TrainStatus == "Inline").ToList(); // Getting All Trains
+                if (Trains.Count> 0)
                 {
-                    return InlineTrains;
+                    foreach (var Train in Trains)
+                    {
+                        TrainSearchResultDTO trainSearchResultDTO = new TrainSearchResultDTO();
+                        trainSearchResultDTO.TrainName = Train.TrainName;
+                        trainSearchResultDTO.TrainNumber = Train.TrainNumber;
+                        trainSearchResultDTO.StartingPoint = Train.StartingPoint;
+                        trainSearchResultDTO.EndingPoint = Train.EndingPoint;
+                        trainSearchResultDTO.TrainCapacity = Train.TotalSeats;
+                        trainSearchResultDTO.StartDate = Train.TrainStartDate;
+                        trainSearchResultDTO.EndDate = Train.TrainEndDate;
+                        Result.Add(trainSearchResultDTO);
+                    }
+                    return Result;
                 }
                 // Fetching whether Train is available as per User Requirement(Using Train Routes)
                 // Fetching Available Trains based on Start date and Status == "Inline"
-                var FutureTrains = Trains.Where(t => t.TrainStatus == "Inline").ToList();
-                foreach (var train in FutureTrains) // Traversing those Trains to get train routes
+                List<int> TrainID = new List<int>();
+                List<Train> FutureTrains = ((await _TrainRepository.Get()).Where(t => t.TrainStatus == "Inline")).ToList();
+                foreach (var train in FutureTrains)
                 {
-                    // Getting Train Routes for Every Train that are available
-                    var TrainRoutes = await _TrainRequestforTrainRoutesRepository.GetbyKey(train.TrainId);
-                    List<TrainRoutes> TrainRouteDetails = TrainRoutes.TrainRoutes.ToList(); // Convertig to List
-                    int StartingPointFlag = 0, EndingPointFlag = 0;
-                    foreach(var Route in TrainRouteDetails)
+                    TrainID.Add(train.TrainId);
+                }
+                foreach (int i in TrainID)
+                {
+                    bool IsTrue = await RouteFunction(i, searchTrainDTO.StartingPoint, searchTrainDTO.EndingPoint, searchTrainDTO.TrainStartDate);
+                    if (IsTrue == true)
                     {
-                        var station = await _StationRepository.GetbyKey(Route.StationId);
-                        Console.WriteLine("Station name "+station.StationName);
-                        if((station.StationName == searchTrainDTO.StartingPoint) && (Route.RouteStartDate.Date == searchTrainDTO.TrainStartDate.Date) && StartingPointFlag == 0)
-                        {
-                            StartingPointFlag = 1;
-                            continue;
-                        }
-                        if((station.StationName == searchTrainDTO.EndingPoint) && StartingPointFlag == 1)
-                        {
-                            EndingPointFlag = 1;
-                            break;
-                        }
-                    }
-                    if(StartingPointFlag == 1 && EndingPointFlag == 1)
-                    {
-                        InlineTrains.Add(train);
+                        var Train = await _TrainRepository.GetbyKey(i);
+                        TrainSearchResultDTO trainSearchResultDTO = new TrainSearchResultDTO();
+                        trainSearchResultDTO.TrainName = Train.TrainName;
+                        trainSearchResultDTO.TrainNumber = Train.TrainNumber;
+                        trainSearchResultDTO.StartingPoint = Train.StartingPoint;
+                        trainSearchResultDTO.EndingPoint = Train.EndingPoint;
+                        trainSearchResultDTO.TrainCapacity = Train.TotalSeats;
+                        trainSearchResultDTO.StartDate = Train.TrainStartDate;
+                        trainSearchResultDTO.EndDate = Train.TrainEndDate;
+                        Result.Add(trainSearchResultDTO);
                     }
                 }
-                if(InlineTrains != null)
+                if (Result.Count > 0)
                 {
-                    return InlineTrains;
+                    return Result;
                 }
                 throw new NoTrainsAvailableforyourSearchException();
             }
@@ -197,7 +285,7 @@ namespace RailwayReservationApp.Services
             {
                 throw new NoTrainsFoundException();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
@@ -230,9 +318,20 @@ namespace RailwayReservationApp.Services
             {
                 var train = await _TrainRepository.GetbyKey(bookTrainDTO.TrainId);
                 var trainRoutes = await _TrainRequestforTrainRoutesRepository.GetbyKey(bookTrainDTO.TrainId);
-                if(train == null)
+                if (train == null)
                 {
                     throw new NoSuchTrainFoundException();
+                }
+                var ClassDetails = await _TrainRequestforClassesRepository.GetbyKey(bookTrainDTO.TrainId);
+                var ClassAloneDetails = ClassDetails.TrainClasses.ToList();
+                float ClassPrice = 1;
+                foreach (var classes in ClassAloneDetails)
+                {
+                    if (classes.ClassName == bookTrainDTO.ClassName)
+                    {
+                        ClassPrice = (await _TrainClassRepository.GetbyKey(classes.ClassId)).ClassPrice;
+                        break;
+                    }
                 }
                 List<TrainRoutes> Routes = trainRoutes.TrainRoutes.ToList();
                 if (bookTrainDTO.StartingPoint == train.StartingPoint)
@@ -247,7 +346,7 @@ namespace RailwayReservationApp.Services
                             break;
                         }
                     }
-                    return StartingPointkm * train.PricePerKM;
+                    return StartingPointkm * train.PricePerKM * bookTrainDTO.Seats.Count + (bookTrainDTO.Seats.Count * ClassPrice);
                 }
                 int Flag = 0;
                 float TotalKilometer = 0;
@@ -267,8 +366,9 @@ namespace RailwayReservationApp.Services
                         Flag = 0;
                     }
                 }
-                return TotalKilometer * trainRoutes.PricePerKM * bookTrainDTO.Seats.Count;
-            }catch(NoSuchTrainFoundException nsfe)
+                return TotalKilometer * trainRoutes.PricePerKM * bookTrainDTO.Seats.Count * ClassPrice + (bookTrainDTO.Seats.Count * ClassPrice);
+            } 
+            catch (NoSuchTrainFoundException nsfe)
             {
                 throw new NoSuchTrainFoundException();
             }
@@ -285,6 +385,7 @@ namespace RailwayReservationApp.Services
             reservation.TrainId = bookTrainDTO.TrainId;
             reservation.UserId = bookTrainDTO.UserId;
             reservation.Amount = TravelPrice;
+            reservation.TrainClassName = bookTrainDTO.ClassName;
             return reservation;
         }
 
@@ -299,6 +400,7 @@ namespace RailwayReservationApp.Services
             bookTrainReturnDTO.Status = reservation.Status;
             bookTrainReturnDTO.TrainId = reservation.TrainId;
             bookTrainReturnDTO.UserId = reservation.UserId;
+            bookTrainReturnDTO.ClassName = reservation.TrainClassName;
             //bookTrainReturnDTO.Seats = (List<int>)reservation.Seats;
             return bookTrainReturnDTO;
         }
@@ -321,15 +423,15 @@ namespace RailwayReservationApp.Services
                 var ReservationAdditionResult = await _ReservationRepository.Add(Reservation);
                 var TrainReservationDetails = await _TrainRequestforReservationsRepository.GetbyKey(bookTrainDTO.TrainId);
                 var ReservationDetails = TrainReservationDetails.TrainReservations.ToList();
-                foreach(var seats in bookTrainDTO.Seats)
+                foreach (var seats in bookTrainDTO.Seats)
                 {
-                    foreach(var reservation in ReservationDetails)
+                    foreach (var reservation in ReservationDetails)
                     {
                         var SeatDetails = await _ReservationRequestforSeatsRepository.GetbyKey(reservation.ReservationId);
                         List<Seat> SeatAloneDetails = SeatDetails.Seats.ToList();
                         foreach (var seat in SeatAloneDetails)
                         {
-                            if(seat.SeatNumber == seats)
+                            if (seat.SeatNumber == seats)
                             {
                                 RevertReservationAddition(ReservationAdditionResult.ReservationId);
                                 throw new SeatAlreadyReservedException();
@@ -366,7 +468,7 @@ namespace RailwayReservationApp.Services
             payment.ReservationId = addPaymentDTO.ReservationId;
             return payment;
         }
-        
+
         public AddPaymentReturnDTO MapPaymentAdditionToAddPaymentReturnDTO(Payment payment)
         {
             AddPaymentReturnDTO addPaymentReturnDTO = new AddPaymentReturnDTO();
@@ -383,17 +485,27 @@ namespace RailwayReservationApp.Services
                 Payment payment = MapAddpaymentDTOtoPayment(addPaymentDTO);
                 var Payment = await _PaymentRepository.Add(payment);
                 var Reservation = await _ReservationRepository.GetbyKey(Payment.ReservationId);
-                if (Reservation.Amount > 3000)
+                if (addPaymentDTO.Amount > 3000)
                 {
                     Rewards rewards = new Rewards();
-                    rewards.UserId = Reservation.UserId;
-                    rewards.RewardPoints = 10;
-                    var RewardAdditionResult = await _RewardRepository.Add(rewards);
+                    // Is Reward Already Available
+                    var IsRewardAvailable = (await _RewardRepository.Get()).Where(r => r.UserId == Reservation.UserId).ToList();
+                    if (IsRewardAvailable.Count == 0)
+                    {
+                        rewards.UserId = Reservation.UserId;
+                        rewards.RewardPoints = 10;
+                        var RewardAdditionResult = await _RewardRepository.Add(rewards);
+                    }
+                    else
+                    {
+                        IsRewardAvailable[0].RewardPoints = IsRewardAvailable[0].RewardPoints + 10;
+                        var RewardAdditionResult = await _RewardRepository.Update(IsRewardAvailable[0]);
+                    }
                 }
                 Reservation.Status = "Confirmed";
                 var UpdatedReservation = await _ReservationRepository.Update(Reservation);
                 return MapPaymentAdditionToAddPaymentReturnDTO(payment);
-            }catch(NoSuchReservationFoundException)
+            } catch (NoSuchReservationFoundException)
             {
                 throw new NoSuchReservationFoundException();
             }
@@ -436,35 +548,36 @@ namespace RailwayReservationApp.Services
                 var CancelAdditionResul = await _ReservationCancelRepository.Add(CancelReservation);
                 // Fetching Reservation Detail to Update status as "Cancelled"
                 var Reservation = await _ReservationRepository.GetbyKey(CancelReservation.ReservationId);
-                Reservation.Status = "Cancelled";
-                // Updating the Reservation Model
-                var UpdatedReservation = await _ReservationRepository.Update(Reservation);
                 // Cancelling Rewards if Reward amount is greater than 3000
                 if (Reservation.Amount > 3000)
                 {
-                    var Rewards = await _RewardRepository.Get();
+                    var Rewards = await _RewardRepository.GetbyKey(Reservation.UserId);
                     // Random Deletion if any reward exits
                     if (Rewards != null)
                     {
-                        foreach (var reward in Rewards)
+                        if (Rewards.RewardPoints >= 10)
                         {
-                            var RewardDeletion = await _RewardRepository.Delete(reward.RewardId);
-                            break;
+                            Rewards.RewardPoints = Rewards.RewardPoints - 10;
+                            await _RewardRepository.Update(Rewards);
                         }
-
                     }
                 }
                 // Fetching the Reservation Seats to delete the Reserved Seats
                 var ReservationSeats = await _ReservationRequestforSeatsRepository.GetbyKey(Reservation.ReservationId);
                 var ReservedSeats = ReservationSeats.Seats.ToList();
+                string UString = "Deleted Seats : ";
                 foreach (var seat in ReservedSeats)
                 {
+                    UString += $"{seat.SeatNumber}, ";
                     // Checking Seats in Reservation Seats and Deleting
                     if (seat.SeatNumber == cancelReservationDTO.SeatNumber)
                     {
                         var DeletedSeat = await _SeatRepository.Delete(seat.SeatId);
                     }
                 }
+                Reservation.Status = UString;
+                // Updating the Reservation Model
+                var UpdatedReservation = await _ReservationRepository.Update(Reservation);
                 return MapCancelReservationTOCancelReservationReturnDTO(CancelReservation);
             }
             catch (NoSuchReservationFoundException)
@@ -475,7 +588,7 @@ namespace RailwayReservationApp.Services
             {
                 throw new NoSuchRewardFoundException();
             }
-            catch(NoSuchSeatFoundException)
+            catch (NoSuchSeatFoundException)
             {
                 throw new NoSuchSeatFoundException();
             }
@@ -484,10 +597,48 @@ namespace RailwayReservationApp.Services
                 throw new Exception();
 
             }
-            
+
         }
         // End - Function to Cancel Reservation
 
+        // Start - Function to Get Classes of a Train
+        public async Task<IList<GetTrainClassReturnDTO>> GetAllClassofTrain(int  TrainId)
+        {
+            try
+            {
+                var IsTrainAvailable = await _TrainRepository.GetbyKey(TrainId);
+                if (IsTrainAvailable != null)
+                {
+                    List<GetTrainClassReturnDTO> TrainClassess = new List<GetTrainClassReturnDTO>();
+                    var TrainClassDetails = await _TrainRequestforClassesRepository.GetbyKey(TrainId);
+                    var TrainAloneDetails = TrainClassDetails.TrainClasses.ToList();
+                    foreach (var classes in TrainAloneDetails)
+                    {
+                        GetTrainClassReturnDTO getTrainClassReturn = new GetTrainClassReturnDTO();
+                        getTrainClassReturn.ClassName = classes.ClassName;
+                        getTrainClassReturn.ClassPrice = classes.ClassPrice;
+                        getTrainClassReturn.StartingSeatNumber = classes.StartingSeatNumber;
+                        getTrainClassReturn.EndingSeatNumber = classes.EndingSeatNumber;
+                        TrainClassess.Add(getTrainClassReturn);
+                    }
+                    if (TrainClassess.Count > 0)
+                    {
+                        return TrainClassess;
+                    }
+                    throw new NoTrainClassFoundException();
+                }
+                throw new NoSuchTrainFoundException();
+            }
+            catch (NoTrainClassFoundException)
+            {
+                throw new NoTrainClassFoundException();
+            }
+            catch (NoSuchTrainFoundException)
+            {
+                throw new NoSuchTrainFoundException();
+            }
+        }
+        // End - Function to Get Classes of a Train
 
     }
 }

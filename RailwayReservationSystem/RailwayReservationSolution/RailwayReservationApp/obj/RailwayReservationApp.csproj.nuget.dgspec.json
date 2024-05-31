@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj": {}
+    "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj": {}
   },
   "projects": {
-    "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj": {
+    "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj",
+        "projectUniqueName": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj",
         "projectName": "RailwayReservationApp",
-        "projectPath": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj",
+        "projectPath": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\RailwayReservationApp.csproj",
         "packagesPath": "C:\\Users\\VC\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\VC\\Desktop\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\obj\\",
+        "outputPath": "C:\\Users\\VC\\Desktop\\MiniProject\\RailwayReservationSystem\\RailwayReservationSolution\\RailwayReservationApp\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -49,6 +49,10 @@
         "net6.0": {
           "targetAlias": "net6.0",
           "dependencies": {
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[6.0.29, )"
+            },
             "Microsoft.EntityFrameworkCore.SqlServer": {
               "target": "Package",
               "version": "[6.0.29, )"
@@ -62,6 +66,10 @@
             "Swashbuckle.AspNetCore": {
               "target": "Package",
               "version": "[6.5.0, )"
+            },
+            "log4net": {
+              "target": "Package",
+              "version": "[2.0.17, )"
             }
           },
           "imports": [

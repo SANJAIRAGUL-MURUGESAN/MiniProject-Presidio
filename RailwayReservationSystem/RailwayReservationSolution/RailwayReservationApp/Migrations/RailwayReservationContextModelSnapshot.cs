@@ -49,6 +49,10 @@ namespace RailwayReservationApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -146,6 +150,10 @@ namespace RailwayReservationApp.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Status")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TrainClassName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -327,6 +335,9 @@ namespace RailwayReservationApp.Migrations
                     b.Property<DateTime?>("TrackOccupiedStartTime")
                         .HasColumnType("datetime2");
 
+                    b.Property<int>("TrainId")
+                        .HasColumnType("int");
+
                     b.HasKey("TrackReservationId");
 
                     b.HasIndex("TrackId");
@@ -396,9 +407,8 @@ namespace RailwayReservationApp.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ClassPrice")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<float>("ClassPrice")
+                        .HasColumnType("real");
 
                     b.Property<int>("EndingSeatNumber")
                         .HasColumnType("int");

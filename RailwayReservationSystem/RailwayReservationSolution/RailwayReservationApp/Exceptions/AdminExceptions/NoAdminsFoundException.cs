@@ -1,5 +1,8 @@
-﻿namespace RailwayReservationApp.Exceptions.AdminExceptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RailwayReservationApp.Exceptions.AdminExceptions
 {
+    [ExcludeFromCodeCoverage]
     public class NoAdminsFoundException : Exception
     {
         string msg;

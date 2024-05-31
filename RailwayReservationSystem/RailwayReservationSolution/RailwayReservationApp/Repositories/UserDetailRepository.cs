@@ -54,7 +54,7 @@ namespace RailwayReservationApp.Repositories
             if (UserDetail != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return UserDetail;
             }
             throw new NoSuchUserFoundException();

@@ -1,181 +1,167 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Options;
-using Moq;
+﻿using Microsoft.EntityFrameworkCore;
 using RailwayReservationApp.Contexts;
-using RailwayReservationApp.Exceptions.ReservationExceptions;
-using RailwayReservationApp.Exceptions.TrainExceptions;
-using RailwayReservationApp.Interfaces;
+using RailwayReservationApp.Exceptions.AdminExceptions;
+using RailwayReservationApp.Exceptions.UserExceptions;
 using RailwayReservationApp.Models;
-using RailwayReservationApp.Models.UserDTOs;
 using RailwayReservationApp.Repositories;
-using RailwayReservationApp.Repositories.ReservationRequest;
-using RailwayReservationApp.Repositories.TrainRequest;
-using RailwayReservationApp.Services;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace RailwayReservationAppTest.RepositoryTest
 {
-    public class Tests
+    public class UserRepositoryTest2
     {
+
         RailwayReservationContext context;
-        IUserService userService;
+        UserRepository userRepository;
+        int UserId;
 
         [SetUp]
-        public void Setup() { 
+        public void Setup()
+        {
             DbContextOptionsBuilder optionsBuilder = new DbContextOptionsBuilder()
-                                                        .UseInMemoryDatabase("dummyDB");
+                                                        .UseInMemoryDatabase("ReservationDummyDB");
             context = new RailwayReservationContext(optionsBuilder.Options);
 
-            IRepository<int, Reservation> _ReservationRepository = new ReservationRepository(context);
-            IRepository<int, Train> _TrainRepository = new TrainRepository(context);
-            TrainRequestforTrainRoutesRepository _TrainRequestforTrainRoutesRepository = new TrainRequestforTrainRoutesRepository(context);
-            IRepository<int, Station> _StationRepository = new StationRepository(context);
-            IRepository<int, Seat> _SeatRepository = new SeatRepository(context);
-            ReservationRequestforSeatsRepository _ReservationRequestforSeatsRepository = new ReservationRequestforSeatsRepository(context);
-            IRepository<int, Users> _UserRepository = new UserRepository(context);
-            IRepository<int, UserDetails> _UserDetailsRepository = new UserDetailRepository(context);
-            TrainRequestforReservationsRepository _TrainRequestforReservationsRepository = new TrainRequestforReservationsRepository(context);
-            IRepository<int, Payment> _PaymentRepository = new PaymentRepository(context);
-            IRepository<int, Rewards> _RewardRepository = new RewardRepository(context);
-            IRepository<int, ReservationCancel> _ReservationCancelRepository = new ReservationCancelRepository(context);
-            //Action
-            userService = new UserServices(_ReservationRepository, _TrainRepository, _StationRepository, _TrainRequestforTrainRoutesRepository,
-                _SeatRepository, _UserRepository, _UserDetailsRepository, _PaymentRepository, _RewardRepository, _ReservationCancelRepository,
-                _TrainRequestforReservationsRepository, _ReservationRequestforSeatsRepository);
+            userRepository = new UserRepository(context);
+            Users userRegister = new Users();
+            userRegister.Name = "sanjai";
+            userRegister.Address = "Tamilnadu";
+            userRegister.Gender = "Male";
+            userRegister.PhoneNumber = "234567890";
+            userRegister.Disability = false;
+            userRegister.Email = "sanjai@gmail.com";
 
-            // Clear existing data
-            context.Trains.RemoveRange(context.Trains);
-            context.SaveChanges();
-
-
+            var result = userRepository.Add(userRegister);
+            UserId = result.Id;
         }
 
         [Test]
-        public void UserRegisterSuccessTest()
+        public async Task UserDeleteSuccessTest()
         {
             //Arrange
-            IRepository<int, Reservation> _ReservationRepository = new ReservationRepository(context);
-            IRepository<int, Train> _TrainRepository = new TrainRepository(context);
-            TrainRequestforTrainRoutesRepository _TrainRequestforTrainRoutesRepository = new TrainRequestforTrainRoutesRepository(context);
-            IRepository<int, Station> _StationRepository = new StationRepository(context);
-            IRepository<int, Seat> _SeatRepository = new SeatRepository(context);
-            ReservationRequestforSeatsRepository _ReservationRequestforSeatsRepository = new ReservationRequestforSeatsRepository(context);
-            IRepository<int, Users> _UserRepository = new UserRepository(context);
-            IRepository<int, UserDetails> _UserDetailsRepository = new UserDetailRepository(context);
-            TrainRequestforReservationsRepository _TrainRequestforReservationsRepository = new TrainRequestforReservationsRepository(context);
-            IRepository<int, Payment> _PaymentRepository = new PaymentRepository(context);
-            IRepository<int, Rewards> _RewardRepository = new RewardRepository(context);
-            IRepository<int, ReservationCancel> _ReservationCancelRepository = new ReservationCancelRepository(context);
-            //Action
+            Users userRegister = new Users();
+            userRegister.Name = "sanjai";
+            userRegister.Address = "Tamilnadu";
+            userRegister.Gender = "Male";
+            userRegister.PhoneNumber = "234567890";
+            userRegister.Disability = false;
+            userRegister.Email = "sanjai@gmail.com";
 
-            IUserService userService = new UserServices(_ReservationRepository, _TrainRepository, _StationRepository, _TrainRequestforTrainRoutesRepository,
-                _SeatRepository, _UserRepository, _UserDetailsRepository, _PaymentRepository, _RewardRepository, _ReservationCancelRepository,
-                _TrainRequestforReservationsRepository, _ReservationRequestforSeatsRepository);
-
-            UserRegisterDTO userRegisterDTO = new UserRegisterDTO();
-            userRegisterDTO.Name = "Sanjai";
-            userRegisterDTO.Email = "sanjai@gmail.com";
-            userRegisterDTO.Address = "Tamilnadu";
-            userRegisterDTO.PhoneNumber = "1234567890";
-            userRegisterDTO.Gender = "Male";
-            userRegisterDTO.Disability = false;
-            userRegisterDTO.Password = "sanjai123";
-            var result = userService.UserRegistration(userRegisterDTO);
-
-            UserRegisterReturnDTO userRegisterReturnDTO = new UserRegisterReturnDTO();
-            userRegisterReturnDTO.Name = "Sanjai";
-            userRegisterReturnDTO.Email = "sanjai@gmail.com";
-            userRegisterReturnDTO.Address = "Tamilnadu";
-            userRegisterReturnDTO.PhoneNumber = "1234567890";
-            userRegisterReturnDTO.Gender = "Male";
-            userRegisterReturnDTO.Disability = false;
-
-            var ans = userService.UserRegistration(userRegisterDTO);
+            var result = await userRepository.Add(userRegister);
+            var DeletedResult = await userRepository.Delete(result.Id);
 
             //Assert
-            Assert.IsNotNull(ans);
-
+            Assert.AreEqual("sanjai", DeletedResult.Name);
         }
+
         [Test]
-        public void BookTrainSuccessTest()
+        public async Task UserDeleteFailTest()
+        {
+
+            ///Action
+            var exception = Assert.ThrowsAsync<NoSuchUserFoundException>(async () => await userRepository.Delete(13456));
+
+            //Assert
+            Assert.AreEqual("No Such User Found!", exception.Message);
+        }
+
+        [Test]
+        public async Task GetUserbyKeySuccessTest()
         {
             //Arrange
-            IRepository<int, Reservation> _ReservationRepository = new ReservationRepository(context);
-            IRepository<int, Train> _TrainRepository = new TrainRepository(context);
-            TrainRequestforTrainRoutesRepository _TrainRequestforTrainRoutesRepository = new TrainRequestforTrainRoutesRepository(context);
-            IRepository<int, Station> _StationRepository = new StationRepository(context);
-            IRepository<int, Seat> _SeatRepository = new SeatRepository(context);
-            ReservationRequestforSeatsRepository _ReservationRequestforSeatsRepository = new ReservationRequestforSeatsRepository(context);
-            IRepository<int, Users> _UserRepository = new UserRepository(context);
-            IRepository<int, UserDetails> _UserDetailsRepository = new UserDetailRepository(context);
-            TrainRequestforReservationsRepository _TrainRequestforReservationsRepository = new TrainRequestforReservationsRepository(context);
-            IRepository<int, Payment> _PaymentRepository = new PaymentRepository(context);
-            IRepository<int, Rewards> _RewardRepository = new RewardRepository(context);
-            IRepository<int, ReservationCancel> _ReservationCancelRepository = new ReservationCancelRepository(context);
-            //Action
-            IUserService userService = new UserServices(_ReservationRepository, _TrainRepository, _StationRepository, _TrainRequestforTrainRoutesRepository,
-                _SeatRepository, _UserRepository, _UserDetailsRepository, _PaymentRepository, _RewardRepository, _ReservationCancelRepository,
-                _TrainRequestforReservationsRepository, _ReservationRequestforSeatsRepository);
+            var result = await userRepository.GetbyKey(UserId);
 
-            BookTrainDTO bookTrainDTO = new BookTrainDTO();
-            bookTrainDTO.StartingPoint = "Pollachi";
-            bookTrainDTO.EndingPoint = "Cochin";
-            bookTrainDTO.TrainDate = DateTime.Now;
-            bookTrainDTO.TrainId = 1;
-            bookTrainDTO.UserId = 1;
-            bookTrainDTO.Seats = new List<int>(1);
-            var TrainAdditionResult = userService.BookTrainByUser(bookTrainDTO);
             //Assert
-            Assert.IsNotNull(TrainAdditionResult);
+            Assert.AreEqual("sanjai", result.Name);
         }
 
         [Test]
-        public void  BookTrainExceptionTest()
+        public async Task GetUserbyKeyFailTest()
         {
-            BookTrainDTO bookTrainDTO = new BookTrainDTO();
-            bookTrainDTO.StartingPoint = "Pollachi";
-            bookTrainDTO.EndingPoint = "Cochin";
-            bookTrainDTO.TrainDate = DateTime.Now;
-            bookTrainDTO.TrainId = 8;
-            bookTrainDTO.UserId = 1;
-            bookTrainDTO.Seats = new List<int>(1);
+            userRepository = new UserRepository(context);
+            Users userRegister = new Users();
+            userRegister.Name = "sanjai";
+            userRegister.Address = "Tamilnadu";
+            userRegister.Gender = "Male";
+            userRegister.PhoneNumber = "234567890";
+            userRegister.Disability = false;
+            userRegister.Email = "sanjai@gmail.com";
 
-            //Action
-            var exception = Assert.Throws<NoSuchTrainFoundException>(() => userService.BookTrainByUser(bookTrainDTO));
+            var result = userRepository.Add(userRegister);
+            ///Action
+            var exception = Assert.ThrowsAsync<NoSuchUserFoundException>(async () => await userRepository.GetbyKey(result.Id+1));
 
             //Assert
-            Assert.AreEqual("No Such Train Found!", exception.Message);
+            Assert.AreEqual("No Such User Found!", exception.Message);
         }
 
         [Test]
-        public void PaymentConfirmationTest()
+        public async Task GetAllUserSuccessTest()
         {
-            AddPaymentDTO paymentDTO = new AddPaymentDTO();
-            paymentDTO.PaymentDate = DateTime.Now;
-            paymentDTO.PaymentMethod = "UPI";
-            paymentDTO.Status = "Success";
-            paymentDTO.Amount = 5000;
-            paymentDTO.ReservationId = 17;
+            //Arrange
+            var result = await userRepository.Get();
 
-            var PaymentResult = userService.ConfirmPayment(paymentDTO);
-            Assert.IsNotNull(PaymentResult);
+            //Assert
+            Assert.IsNotNull(result);
         }
 
         [Test]
-        public void PaymentConfirmationExceptionTest()
+        public async Task GetAllUserFailTest()
         {
-            AddPaymentDTO paymentDTO = new AddPaymentDTO();
-            paymentDTO.PaymentDate = DateTime.Now;
-            paymentDTO.PaymentMethod = "UPI";
-            paymentDTO.Status = "Success";
-            paymentDTO.Amount = 5000;
-            paymentDTO.ReservationId = 45678;
-
             //Action
-            var exception = Assert.Throws<NoSuchReservationFoundException>(() => userService.ConfirmPayment(paymentDTO));
+            var exception = Assert.ThrowsAsync<NoAdminsFoundException>(async () => await userRepository.Get());
 
             //Assert
-            Assert.AreEqual("No Such Reservation Found!", exception.Message);
+            Assert.IsNull(exception);
         }
+
+        [Test]
+        public async Task UpdateUserSuccessTest()
+        { 
+            Users userRegister = new Users();
+            userRegister.Name = "sanjai";
+            userRegister.Address = "Tamilnadu";
+            userRegister.Gender = "Male";
+            userRegister.PhoneNumber = "234567890";
+            userRegister.Disability = false;
+            userRegister.Email = "sanjai@gmail.com";
+
+            var result = await userRepository.Add(userRegister);
+
+            result.Name = "SanjaiRagul";
+            //Arrange
+            var UpdatedResult = await userRepository.Update(result);
+
+            //Assert
+            Assert.AreEqual("SanjaiRagul", result.Name);
+        }
+
+        [Test]
+        public async Task UpdateUserFailTest()
+        {
+            Users userRegister = new Users();
+            userRegister.Name = "sanjai";
+            userRegister.Address = "Tamilnadu";
+            userRegister.Gender = "Male";
+            userRegister.PhoneNumber = "234567890";
+            userRegister.Disability = false;
+            userRegister.Email = "sanjai@gmail.com";
+
+            var result = await userRepository.Add(userRegister);
+
+            result.Name = "SanjaiRagul";
+
+            result.Id = 456;
+            //Action
+            var exception = Assert.ThrowsAsync<NoAdminsFoundException>(async () => await userRepository.Update(result));
+
+            //Assert
+            Assert.AreEqual("No Admins Found!", exception.Message);
+        }
+
     }
 }
-

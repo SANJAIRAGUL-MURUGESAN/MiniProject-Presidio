@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchStationFoundException();
         }
-        public virtual Task<Station> GetbyKey(int key)
+        public async virtual Task<Station> GetbyKey(int key)
         {
-            var station = _context.Stations.FirstOrDefaultAsync(t => t.StationId == key);
+            var station = await _context.Stations.FirstOrDefaultAsync(t => t.StationId == key);
             if (station != null)
             {
                 return station;
@@ -54,7 +54,7 @@ namespace RailwayReservationApp.Repositories
             if (station != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return station;
             }
             throw new NoSuchStationFoundException();

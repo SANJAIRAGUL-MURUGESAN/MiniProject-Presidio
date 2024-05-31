@@ -12,5 +12,9 @@
         // Foreign Key
         public int TrackId { get; set; }
         public Track Track { get; set; }
+
+        // Foreign Key
+
+        public int TrainId { get; set; }
     }
 }

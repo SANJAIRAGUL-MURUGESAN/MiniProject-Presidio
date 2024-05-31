@@ -12,6 +12,7 @@ namespace RailwayReservationApp.Models
         public DateTime TrainDate { get; set; }
         public float Amount { get; set; }
         public string Status { get; set; }
+        public string TrainClassName { get; set; }
 
         // Foreign key - User ID
         public int UserId { get; set; }

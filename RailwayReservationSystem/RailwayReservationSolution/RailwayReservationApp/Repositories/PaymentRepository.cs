@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchPaymentFoundException();
         }
-        public Task<Payment> GetbyKey(int key)
+        public async Task<Payment> GetbyKey(int key)
         {
-            var payment = _context.Payments.FirstOrDefaultAsync(t => t.PaymentId == key);
+            var payment = await _context.Payments.FirstOrDefaultAsync(t => t.PaymentId == key);
             if (payment != null)
             {
                 return payment;
@@ -50,11 +50,11 @@ namespace RailwayReservationApp.Repositories
         }
         public async Task<Payment> Update(Payment item)
         {
-            var payment = await GetbyKey(item.ReservationId);
+            var payment = await GetbyKey(item.PaymentId);
             if (payment != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return payment;
             }
             throw new NoSuchPaymentFoundException();

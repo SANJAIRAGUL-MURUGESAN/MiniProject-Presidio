@@ -20,7 +20,8 @@ namespace RailwayReservationApp.Migrations
                     PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Gender = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Disability = table.Column<bool>(type: "bit", nullable: false),
-                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -113,7 +114,7 @@ namespace RailwayReservationApp.Migrations
                     ClassId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     ClassName = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    ClassPrice = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    ClassPrice = table.Column<float>(type: "real", nullable: false),
                     StartingSeatNumber = table.Column<int>(type: "int", nullable: false),
                     EndingSeatNumber = table.Column<int>(type: "int", nullable: false),
                     TrainId = table.Column<int>(type: "int", nullable: false)
@@ -175,6 +176,7 @@ namespace RailwayReservationApp.Migrations
                     TrainDate = table.Column<DateTime>(type: "datetime2", nullable: false),
                     Amount = table.Column<float>(type: "real", nullable: false),
                     Status = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    TrainClassName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     UserId = table.Column<int>(type: "int", nullable: false),
                     TrainId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -248,7 +250,8 @@ namespace RailwayReservationApp.Migrations
                     TrackOccupiedStartDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     TrackOccupiedEndDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ReservationStatus = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    TrackId = table.Column<int>(type: "int", nullable: false)
+                    TrackId = table.Column<int>(type: "int", nullable: false),
+                    TrainId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {

@@ -1,5 +1,8 @@
-﻿namespace RailwayReservationApp.Exceptions.ReservationCancelExceptions
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace RailwayReservationApp.Exceptions.ReservationCancelExceptions
 {
+    [ExcludeFromCodeCoverage]
     public class NoReservationCancelsFoundException : Exception
     {
         string msg;

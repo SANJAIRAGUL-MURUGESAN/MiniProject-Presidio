@@ -32,9 +32,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchTrackReservationFoundException();
         }
-        public Task<TrackReservation> GetbyKey(int key)
+        public async Task<TrackReservation> GetbyKey(int key)
         {
-            var track = _context.TrackReservations.FirstOrDefaultAsync(t => t.TrackReservationId == key);
+            var track = await _context.TrackReservations.FirstOrDefaultAsync(t => t.TrackReservationId == key);
             if (track != null)
             {
                 return track;
@@ -56,7 +56,7 @@ namespace RailwayReservationApp.Repositories
             if (TrackReservation != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return TrackReservation;
             }
             throw new NoSuchTrackReservationFoundException();

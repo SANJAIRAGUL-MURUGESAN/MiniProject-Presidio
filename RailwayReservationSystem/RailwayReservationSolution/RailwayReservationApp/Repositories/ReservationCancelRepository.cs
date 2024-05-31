@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchReservationCancelFoundException();
         }
-        public Task<ReservationCancel> GetbyKey(int key)
+        public async Task<ReservationCancel> GetbyKey(int key)
         {
-            var reservationCancel = _context.ReservationCancels.FirstOrDefaultAsync(t => t.ReservationCancelId == key);
+            var reservationCancel = await _context.ReservationCancels.FirstOrDefaultAsync(t => t.ReservationCancelId == key);
             if (reservationCancel != null)
             {
                 return reservationCancel;
@@ -54,7 +54,7 @@ namespace RailwayReservationApp.Repositories
             if (user != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return user;
             }
             throw new NoSuchReservationCancelFoundException();

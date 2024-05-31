@@ -31,9 +31,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchSeatFoundException();
         }
-        public Task<Seat> GetbyKey(int key)
+        public async Task<Seat> GetbyKey(int key)
         {
-            var seat = _context.Seats.FirstOrDefaultAsync(t => t.SeatId == key);
+            var seat = await _context.Seats.FirstOrDefaultAsync(t => t.SeatId == key);
             if (seat != null)
             {
                 return seat;
@@ -55,7 +55,7 @@ namespace RailwayReservationApp.Repositories
             if (seat != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return seat;
             }
             throw new NoSuchSeatFoundException();

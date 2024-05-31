@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchTrainClassFoundException();
         }
-        public Task<TrainClass> GetbyKey(int key)
+        public async Task<TrainClass> GetbyKey(int key)
         {
-            var trainClass = _context.TrainClasses.FirstOrDefaultAsync(t => t.TrainId == key);
+            var trainClass = await _context.TrainClasses.FirstOrDefaultAsync(t => t.TrainId == key);
             if (trainClass != null)
             {
                 return trainClass;
@@ -54,7 +54,7 @@ namespace RailwayReservationApp.Repositories
             if (trainClass != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return trainClass;
             }
             throw new NoSuchTrainClassFoundException();

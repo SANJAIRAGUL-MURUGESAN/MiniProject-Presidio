@@ -30,9 +30,9 @@ namespace RailwayReservationApp.Repositories
             }
             throw new NoSuchAdminFoundException();
         }
-        public Task<Admin> GetbyKey(int key)
+        public async Task<Admin> GetbyKey(int key)
         {
-            var admin = _context.Admins.FirstOrDefaultAsync(t => t.Id == key);
+            var admin = await _context.Admins.FirstOrDefaultAsync(t => t.Id == key);
             if (admin != null)
             {
                 return admin;
@@ -54,7 +54,7 @@ namespace RailwayReservationApp.Repositories
             if (user != null)
             {
                 _context.Update(item);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return user;
             }
             throw new NoSuchAdminFoundException();

@@ -1,4 +1,7 @@
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using RailwayReservationApp.Contexts;
 using RailwayReservationApp.Interfaces;
 using RailwayReservationApp.Models;
@@ -8,9 +11,12 @@ using RailwayReservationApp.Repositories.StationRequest;
 using RailwayReservationApp.Repositories.TrackRequest;
 using RailwayReservationApp.Repositories.TrainRequest;
 using RailwayReservationApp.Services;
+using System.Diagnostics.CodeAnalysis;
+using System.Text;
 
 namespace RailwayReservationApp
 {
+    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)
@@ -23,6 +29,52 @@ namespace RailwayReservationApp
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
+
+            builder.Services.AddSwaggerGen(option =>
+            {
+                option.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Name = "Authorization",
+                    Type = SecuritySchemeType.ApiKey,
+                    Scheme = "Bearer",
+                    BearerFormat = "JWT",
+                    In = ParameterLocation.Header,
+                    Description = "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+                });
+                option.AddSecurityRequirement(new OpenApiSecurityRequirement
+            {
+                {
+                    new OpenApiSecurityScheme
+                    {
+                        Reference = new OpenApiReference
+                        {
+                            Type = ReferenceType.SecurityScheme,
+                            Id = "Bearer"
+                        }
+                    },
+                    new string[] { }
+                }
+            });
+            });
+
+            builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+              .AddJwtBearer(options =>
+              {
+                  options.TokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidationParameters()
+                  {
+                      ValidateIssuer = false,
+                      ValidateAudience = false,
+                      ValidateIssuerSigningKey = true,
+                      IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["TokenKey:JWT"]))
+                  };
+
+              });
+
+            builder.Services.AddAuthorization(options =>
+            {
+                options.AddPolicy("RequireAdministratorRole",
+                     policy => policy.RequireRole("Admin"));
+            });
 
             #region Contexts
             builder.Services.AddDbContext<RailwayReservationContext>(
@@ -63,6 +115,8 @@ namespace RailwayReservationApp
             #region Services
             builder.Services.AddScoped<IAdminService, AdminServices>();
             builder.Services.AddScoped<IUserService, UserServices>();
+            builder.Services.AddScoped<IUserSecondaryService, UserSecondaryServices>();
+            builder.Services.AddScoped<ITokenService, TokenService>();
             #endregion
 
             var app = builder.Build();
@@ -74,6 +128,7 @@ namespace RailwayReservationApp
                 app.UseSwaggerUI();
             }
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
 

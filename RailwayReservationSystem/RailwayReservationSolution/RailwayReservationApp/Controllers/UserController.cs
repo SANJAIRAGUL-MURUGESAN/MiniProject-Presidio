@@ -19,7 +19,6 @@ namespace RailwayReservationApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class UserController : ControllerBase
     {
         private readonly IUserService _UserService;
@@ -72,7 +71,7 @@ namespace RailwayReservationApp.Controllers
         }
 
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("SearchTrainByUser/Location")]
         [HttpPost]
         [ProducesResponseType(typeof(IList<TrainSearchResultDTO>), StatusCodes.Status200OK)]
@@ -100,7 +99,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("BookTrainByUser")]
         [HttpPost]
         [ProducesResponseType(typeof(BookTrainReturnDTO), StatusCodes.Status200OK)]
@@ -128,7 +127,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("ReservationPayment")]
         [HttpPost]
         [ProducesResponseType(typeof(AddPaymentReturnDTO), StatusCodes.Status200OK)]
@@ -152,7 +151,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("CancelReservation")]
         [HttpPost]
         [ProducesResponseType(typeof(CancelReservationReturnDTO), StatusCodes.Status200OK)]
@@ -185,7 +184,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("GetTrainClasses")]
         [HttpPost]
         [ProducesResponseType(typeof(IList<GetTrainClassReturnDTO>), StatusCodes.Status200OK)]
@@ -214,7 +213,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("UpcomingReservations")]
         [HttpPost]
         [ProducesResponseType(typeof(IList<UserBookedTrainsReturnDTO>), StatusCodes.Status200OK)]
@@ -247,7 +246,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("PastBookings")]
         [HttpPost]
         [ProducesResponseType(typeof(IList<UserBookedTrainsReturnDTO>), StatusCodes.Status200OK)]
@@ -280,7 +279,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("CheckSeatDetailsofTrain")]
         [HttpPost]
         [ProducesResponseType(typeof(CheckSeatDetailsReturnDTO), StatusCodes.Status200OK)]
@@ -306,7 +305,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("UpdateUser")]
         [HttpPut]
         [ProducesResponseType(typeof(Users), StatusCodes.Status200OK)]
@@ -331,7 +330,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "User")]
+        [Authorize(Roles = "User")]
         [Route("DeleteUser")]
         [HttpDelete]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]

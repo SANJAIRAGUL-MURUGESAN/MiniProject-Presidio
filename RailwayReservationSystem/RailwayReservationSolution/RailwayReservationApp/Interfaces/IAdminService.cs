@@ -18,5 +18,6 @@ namespace RailwayReservationApp.Interfaces
         public Task<IList<Train>> GetAllInlineTrains();
         public Task<AdminRegisterReturnDTO> AdminRegistration(AdminRegisterDTO adminRegisterDTO);
         public Task<AdminLoginReturnDTO> AdminLogin(AdminLoginDTO adminLoginDTO);
+        public Task<AddRefundReturnDTO> ProcessRefundByAdmin(AddRefundDTO addRefundDTO);
     }
 }

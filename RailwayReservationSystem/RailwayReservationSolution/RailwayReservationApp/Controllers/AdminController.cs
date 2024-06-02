@@ -15,7 +15,6 @@ namespace RailwayReservationApp.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [ExcludeFromCodeCoverage]
     public class AdminController : ControllerBase
     {
         private readonly IAdminService _AdminService;
@@ -63,7 +62,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("AddTrainByAdmin")]
         [HttpPost]
         [ProducesResponseType(typeof(AddTrainReturnDTO), StatusCodes.Status200OK)]
@@ -87,7 +86,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("AddTrainRouteByAdmin")]
         [HttpPost]
         [ProducesResponseType(typeof(AddTrainRouteReturnDTO), StatusCodes.Status200OK)]
@@ -119,7 +118,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("AddTrainClassByAdmin")]
         [HttpPost]
         [ProducesResponseType(typeof(AddTrainClassReturnDTO), StatusCodes.Status200OK)]
@@ -147,7 +146,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("AddStationByAdmin")]
         [HttpPost]
         [ProducesResponseType(typeof(AddStationReturnDTO), StatusCodes.Status200OK)]
@@ -171,7 +170,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("AddTrackToStationByAdmin")]
         [HttpPost]
         [ProducesResponseType(typeof(AddTrackReturnDTO), StatusCodes.Status200OK)]
@@ -201,7 +200,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("UpdatePricePerKMByAdmin")]
         [HttpPut]
         [ProducesResponseType(typeof(UpdatePricePerKmReturnDTO), StatusCodes.Status200OK)]
@@ -227,7 +226,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("CheckSeatDetailsofTrain")]
         [HttpPost]
         [ProducesResponseType(typeof(CheckSeatDetailsReturnDTO), StatusCodes.Status200OK)]
@@ -253,7 +252,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("CheckReservedTracksofStation")]
         [HttpPost]
         [ProducesResponseType(typeof(GetReservedTracksReturnDTO), StatusCodes.Status200OK)]
@@ -282,7 +281,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("UpdateTrainStatusAsCompleted")]
         [HttpPut]
         [ProducesResponseType(typeof(string), StatusCodes.Status200OK)]
@@ -306,7 +305,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("UpdateTrainRouteDetailsByAdmin")]
         [HttpPut]
         [ProducesResponseType(typeof(TrainRoutes), StatusCodes.Status200OK)]
@@ -330,7 +329,7 @@ namespace RailwayReservationApp.Controllers
             }
         }
 
-        //[Authorize(Roles = "Admin")]
+        [Authorize(Roles = "Admin")]
         [Route("GetAllInlineTrainsByAdmin")]
         [HttpGet]
         [ProducesResponseType(typeof(IList<Train>), StatusCodes.Status200OK)]
@@ -347,6 +346,27 @@ namespace RailwayReservationApp.Controllers
             catch (NoTrainsFoundException nstfe)
             {
                 return NotFound(new ErrorModel(404, nstfe.Message));
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        [Authorize(Roles = "Admin")]
+        [Route("GetAllInlineTrainsByAdmin")]
+        [HttpGet]
+        [ProducesResponseType(typeof(AddRefundReturnDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesErrorResponseType(typeof(ErrorModel))]
+        public async Task<ActionResult<AddRefundReturnDTO>> AddRefund(AddRefundDTO addRefundDTO)
+        {
+            try
+            {
+                var refund = await _AdminService.ProcessRefundByAdmin(addRefundDTO);
+                return Ok(refund);
             }
             catch (Exception ex)
             {

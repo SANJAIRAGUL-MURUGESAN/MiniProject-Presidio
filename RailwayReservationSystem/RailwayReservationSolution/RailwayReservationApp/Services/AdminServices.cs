@@ -29,6 +29,7 @@ namespace RailwayReservationApp.Services
         private readonly IRepository<int, Track> _TrackRepository;
         private readonly IRepository<int, TrackReservation> _TrackReservationRepository;
         private readonly IRepository<int, Admin> _AdminRepository;
+        private readonly IRepository<int, Refund> _RefundRepository;
         private readonly ITokenService _TokenService;
         private readonly StationRequestRepository _StationRequestRepository; // To retrieve Tracks for a station
         private readonly TrainRequestforClassesRepository _TrainRequestforClassesRepository; // To retrieve for a Classes for a Train
@@ -76,7 +77,7 @@ namespace RailwayReservationApp.Services
             IRepository<int, Track> trackRepository, TrackRequestforReservationRepository trackRequestforReservationRepository,
             IRepository<int, TrackReservation> trackReservationRepository, IRepository<int, TrainClass> trainClassRepository,
             TrainRequestforReservationsRepository TrainRequestforReservationsRepository, ReservationRequestforSeatsRepository ReservationRequestforSeatsRepository,
-            IRepository<int, Admin> AdminRepository, ITokenService tokenService)
+            IRepository<int, Admin> AdminRepository, ITokenService tokenService,IRepository<int, Refund> refundRepository)
         {
             _TrainRepository = trainRepository;
             _TrainRouteRepository = trainRouteRepository;
@@ -91,6 +92,7 @@ namespace RailwayReservationApp.Services
             _ReservationRequestforSeatsRepository = ReservationRequestforSeatsRepository;
             _AdminRepository = AdminRepository;
             _TokenService = tokenService;
+            _RefundRepository = refundRepository;
         }
 
         public AdminServices(IRepository<int, Train> trainRepository1, IRepository<int, TrainRoutes> trainRouteRepository1, IRepository<int, Station> stationRepository1, IRepository<int, TrainClass> trainClassRepository1, IRepository<int, Track> trackRepository1, IRepository<int, TrackReservation> trackReservationRepository1, IRepository<int, Admin> adminRepository1, StationRequestRepository stationRequestRepository, TrainRequestforClassesRepository trainRequestforClassesRepository, TrackRequestforReservationRepository trackRequestforReservationRepository, TrainRequestforReservationsRepository trainRequestforReservationsRepository, ReservationRequestforSeatsRepository reservationRequestforSeatsRepository)
@@ -830,8 +832,40 @@ namespace RailwayReservationApp.Services
                 throw new Exception();
             }
         }
-        
-       // End - Function to Get the All Inline Trains
 
+        // End - Function to Get the All Inline Trains
+       public Refund MapAddRefundDTOtoRefund(AddRefundDTO addRefundDTO)
+        {
+            Refund refund = new Refund();
+            float RefundAmount = addRefundDTO.RefundAmount * (50 / 100);
+            refund.RefundDate = addRefundDTO.RefundDate;
+            refund.ReservationCancelId = addRefundDTO.ReservationCancelId;
+            refund.UserId = addRefundDTO.UserId;
+            refund.RefundAmount = RefundAmount;
+            return refund;
+        }
+
+        public AddRefundReturnDTO MapRefundToAddRefundReturnDTO(Refund refund)
+        {
+            AddRefundReturnDTO addRefundReturnDTO = new AddRefundReturnDTO();
+            addRefundReturnDTO.UserId = refund.UserId;
+            addRefundReturnDTO.ReservationCancelId = refund.ReservationCancelId;
+            addRefundReturnDTO.RefundAmount = refund.RefundAmount;
+            addRefundReturnDTO.RefundDate = refund.RefundDate;
+            return addRefundReturnDTO;
+        }
+        public async Task<AddRefundReturnDTO> ProcessRefundByAdmin(AddRefundDTO addRefundDTO)
+        {
+            try
+            {
+                Refund refund = MapAddRefundDTOtoRefund(addRefundDTO);
+                var RefundResult = await _RefundRepository.Add(refund);
+                return MapRefundToAddRefundReturnDTO(RefundResult);
+            }
+            catch (Exception)
+            {
+                throw new Exception();
+            }
+        }
     }
 }

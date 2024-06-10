@@ -2,7 +2,6 @@
 
 namespace RailwayReservationApp.Exceptions.PaymentExceptions
 {
-    [ExcludeFromCodeCoverage]
     public class NoPaymentsFoundException : Exception
     {
         string msg;

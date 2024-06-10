@@ -7,7 +7,6 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace RailwayReservationApp.Repositories
 {
-    [ExcludeFromCodeCoverage]
     public class RefundRepository : IRepository<int, Refund>
     {
         private readonly RailwayReservationContext _context;

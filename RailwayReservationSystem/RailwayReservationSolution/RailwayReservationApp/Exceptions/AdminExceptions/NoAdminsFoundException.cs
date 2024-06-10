@@ -2,7 +2,6 @@
 
 namespace RailwayReservationApp.Exceptions.AdminExceptions
 {
-    [ExcludeFromCodeCoverage]
     public class NoAdminsFoundException : Exception
     {
         string msg;

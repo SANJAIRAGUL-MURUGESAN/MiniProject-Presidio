@@ -2,8 +2,6 @@
 
 namespace RailwayReservationApp.Exceptions.AdminExceptions
 {
-
-    [ExcludeFromCodeCoverage]
     public class InvalidAdminCredentialsException : Exception
     {
         string msg;

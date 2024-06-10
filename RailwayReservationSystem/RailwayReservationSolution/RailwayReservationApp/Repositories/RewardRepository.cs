@@ -25,7 +25,7 @@ namespace RailwayReservationApp.Repositories
             if (reward != null)
             {
                 _context.Remove(reward);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return reward;
             }
             throw new NoSuchRewardFoundException();
@@ -53,9 +53,12 @@ namespace RailwayReservationApp.Repositories
             var reward = await GetbyKey(item.RewardId);
             if (reward != null)
             {
-                _context.Update(item);
-                await _context.SaveChangesAsync(true);
+                _context.Entry(reward).CurrentValues.SetValues(item);
+                await _context.SaveChangesAsync();
                 return reward;
+                //_context.Update(item);
+                //await _context.SaveChangesAsync(true);
+                //return reward;
             }
             throw new NoSuchRewardFoundException();
         }

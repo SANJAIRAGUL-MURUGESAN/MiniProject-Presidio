@@ -243,6 +243,10 @@ namespace RailwayReservationApp.Services
             {
                 // Checking whether the Train status is already in Inline and if Inline, checking whether
                 // -it is available in required date
+                if(addTrainDTO.TrainStartDate.Date < addTrainDTO.TrainEndDate.Date)
+                {
+                    throw new InvalidDateException();
+                }
                 var Trains = (await _TrainRepository.Get()).Where(t => t.TrainNumber == addTrainDTO.TrainNumber && t.TrainStatus == "Inline");
                 if (Trains != null)
                 {
@@ -269,6 +273,10 @@ namespace RailwayReservationApp.Services
             catch (TrainAlreadyAllotedException taae)
             {
                 throw new TrainAlreadyAllotedException();
+            }
+            catch (InvalidDataException)
+            {
+                throw new InvalidDataException();
             }
         }
 

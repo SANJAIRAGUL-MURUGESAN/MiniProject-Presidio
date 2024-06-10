@@ -12,8 +12,8 @@ using RailwayReservationApp.Contexts;
 namespace RailwayReservationApp.Migrations
 {
     [DbContext(typeof(RailwayReservationContext))]
-    [Migration("20240531055245_Initial")]
-    partial class Initial
+    [Migration("20240606082757_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

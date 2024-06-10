@@ -80,6 +80,10 @@ namespace RailwayReservationApp.Controllers
             {
                 return StatusCode(StatusCodes.Status409Conflict,new ErrorModel(409, taae.Message));
             }
+            catch (InvalidDataException ide)
+            {
+                return StatusCode(StatusCodes.Status409Conflict, new ErrorModel(409, ide.Message));
+            }
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
@@ -355,8 +359,8 @@ namespace RailwayReservationApp.Controllers
         }
 
         [Authorize(Roles = "Admin")]
-        [Route("GetAllInlineTrainsByAdmin")]
-        [HttpGet]
+        [Route("ProcessRefundByAdmin")]
+        [HttpPost]
         [ProducesResponseType(typeof(AddRefundReturnDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]

@@ -16,7 +16,6 @@ using System.Text;
 
 namespace RailwayReservationApp
 {
-    [ExcludeFromCodeCoverage]
     public class Program
     {
         public static void Main(string[] args)
@@ -110,6 +109,7 @@ namespace RailwayReservationApp
             builder.Services.AddScoped<ReservationRequestforSeatsRepository>();
             // Train Request Repository(To retrieve Reservations of a Train)
             builder.Services.AddScoped<TrainRequestforReservationsRepository>();
+            builder.Services.AddScoped<IRepository<int, Refund>, RefundRepository>();
             #endregion
 
             #region Services

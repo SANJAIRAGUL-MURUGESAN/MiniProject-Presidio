@@ -61,9 +61,12 @@ namespace RailwayReservationApp.Repositories
             var reservation = await GetbyKey(item.ReservationId);
             if (reservation != null)
             {
-                _context.Update(item);
-                await _context.SaveChangesAsync(true);
+                _context.Entry(reservation).CurrentValues.SetValues(item);
+                await _context.SaveChangesAsync();
                 return reservation;
+                //_context.Update(item);
+                //await _context.SaveChangesAsync(true);
+                //return reservation;
             }
             throw new NoSuchReservationFoundException();
         }

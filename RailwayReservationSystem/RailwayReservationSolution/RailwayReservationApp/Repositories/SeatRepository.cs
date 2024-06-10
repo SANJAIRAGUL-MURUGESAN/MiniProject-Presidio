@@ -26,7 +26,7 @@ namespace RailwayReservationApp.Repositories
             if (seat != null)
             {
                 _context.Remove(seat);
-                _context.SaveChangesAsync(true);
+                await _context.SaveChangesAsync(true);
                 return seat;
             }
             throw new NoSuchSeatFoundException();
@@ -54,9 +54,12 @@ namespace RailwayReservationApp.Repositories
             var seat = await GetbyKey(item.SeatId);
             if (seat != null)
             {
-                _context.Update(item);
-                await _context.SaveChangesAsync(true);
+                _context.Entry(seat).CurrentValues.SetValues(item);
+                await _context.SaveChangesAsync();
                 return seat;
+                //_context.Update(item);
+                //await _context.SaveChangesAsync(true);
+                //return seat;
             }
             throw new NoSuchSeatFoundException();
         }

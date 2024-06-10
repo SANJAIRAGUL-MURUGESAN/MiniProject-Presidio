@@ -1,4 +1,5 @@
-﻿using RailwayReservationApp.Exceptions.ReservationExceptions;
+﻿using Microsoft.AspNetCore.Routing;
+using RailwayReservationApp.Exceptions.ReservationExceptions;
 using RailwayReservationApp.Exceptions.RewardExceptions;
 using RailwayReservationApp.Exceptions.SeatExcepions;
 using RailwayReservationApp.Exceptions.TrainClassExceptions;
@@ -207,6 +208,19 @@ namespace RailwayReservationApp.Services
             List<TrainRoutes> TrainAloneDetails = TrainDetails.TrainRoutes.ToList();
             int StartingPointFlag = 0;
             int EndingPointFlag = 0;
+            if(TrainDetails.StartingPoint == StartingPoint && TrainDetails.TrainStartDate.Date == StartDate.Date)
+            {
+                foreach (var route in TrainAloneDetails)
+                {
+                    var station = await _StationRepository.GetbyKey(route.StationId);
+                    Console.WriteLine("Station name " + station.StationName);
+                    if ((station.StationName == EndingPoint))
+                    {
+                        return true;
+                    }
+                }
+                return false;
+            }
             foreach (var route in TrainAloneDetails)
             {
                 var station = await _StationRepository.GetbyKey(route.StationId);
@@ -356,6 +370,7 @@ namespace RailwayReservationApp.Services
                     if (station.StationName == bookTrainDTO.StartingPoint)
                     {
                         Flag = 1;
+                        continue;
                     }
                     if (Flag == 1)
                     {
@@ -366,7 +381,7 @@ namespace RailwayReservationApp.Services
                         Flag = 0;
                     }
                 }
-                return TotalKilometer * trainRoutes.PricePerKM * bookTrainDTO.Seats.Count * ClassPrice + (bookTrainDTO.Seats.Count * ClassPrice);
+                return TotalKilometer * trainRoutes.PricePerKM * bookTrainDTO.Seats.Count + (bookTrainDTO.Seats.Count * ClassPrice);
             } 
             catch (NoSuchTrainFoundException nsfe)
             {
